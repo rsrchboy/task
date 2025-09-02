@@ -1,0 +1,6 @@
+task: [prompt-in-cmd] echo 'foo'
+foo
+Do you want to continue? [y/N]: task: [prompt-in-cmd] echo 'dangerous'
+dangerous
+task: [prompt-in-cmd] echo 'bar'
+bar

@@ -20,6 +20,7 @@ type Cmd struct {
 	IgnoreError bool
 	Defer       bool
 	Platforms   []*Platform
+	Prompt      Prompt
 }
 
 func (c *Cmd) DeepCopy() *Cmd {
@@ -38,6 +39,7 @@ func (c *Cmd) DeepCopy() *Cmd {
 		IgnoreError: c.IgnoreError,
 		Defer:       c.Defer,
 		Platforms:   deepcopy.Slice(c.Platforms),
+		Prompt:      c.Prompt,
 	}
 }
 
@@ -65,10 +67,15 @@ func (c *Cmd) UnmarshalYAML(node *yaml.Node) error {
 			IgnoreError bool `yaml:"ignore_error"`
 			Defer       *Defer
 			Platforms   []*Platform
+			Prompt      Prompt
 		}
 		if err := node.Decode(&cmdStruct); err != nil {
 			return errors.NewTaskfileDecodeError(err, node)
 		}
+
+		// FIXME I'm fairly sure this is incorrect placement
+		c.Prompt = cmdStruct.Prompt
+
 		if cmdStruct.Defer != nil {
 
 			// A deferred command
@@ -111,6 +118,12 @@ func (c *Cmd) UnmarshalYAML(node *yaml.Node) error {
 			c.Shopt = cmdStruct.Shopt
 			c.IgnoreError = cmdStruct.IgnoreError
 			c.Platforms = cmdStruct.Platforms
+			return nil
+		}
+
+		if len(cmdStruct.Prompt) > 0 {
+			// If we're here, we have neither a cmd nor a task; however, we do
+			// have a prompt.  This is legal.
 			return nil
 		}
 

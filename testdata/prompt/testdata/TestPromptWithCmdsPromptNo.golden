@@ -1,0 +1,3 @@
+task: [prompt-in-cmds] echo 'foo'
+foo
+Do you want to continue? [y/N]: 

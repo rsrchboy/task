@@ -248,6 +248,7 @@ func (e *Executor) RunTask(ctx context.Context, call *Call) error {
 			}
 		}
 
+		// XXX
 		for _, p := range t.Prompt {
 			if p != "" && !e.Dry {
 				if err := e.Logger.Prompt(logger.Yellow, p, "n", "y", "yes"); errors.Is(err, logger.ErrNoTerminal) {
@@ -266,10 +267,29 @@ func (e *Executor) RunTask(ctx context.Context, call *Call) error {
 
 		var deferredExitCode uint8
 
+	cmdLoop:
 		for i := range t.Cmds {
 			if t.Cmds[i].Defer {
 				defer e.runDeferred(t, call, i, t.Vars, &deferredExitCode)
 				continue
+			}
+
+			// XXX
+			for _, p := range t.Cmds[i].Prompt {
+				if p != "" && !e.Dry {
+					if err := e.Logger.Prompt(logger.Yellow, p, "n", "y", "yes"); errors.Is(err, logger.ErrNoTerminal) {
+						return &errors.TaskCancelledNoTerminalError{TaskName: call.Task}
+					} else if errors.Is(err, logger.ErrPromptCancelled) {
+						// if we have a cmd or task, skip this command
+						if t.Cmds[i].Cmd != "" || t.Cmds[i].Task != "" {
+							continue cmdLoop
+						}
+						// ...otherwise abort the task
+						return &errors.TaskCancelledByUserError{TaskName: call.Task}
+					} else if err != nil {
+						return err
+					}
+				}
 			}
 
 			if err := e.runCommand(ctx, t, call, i); err != nil {

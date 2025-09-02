@@ -825,6 +825,59 @@ func TestPromptWithIndirectTask(t *testing.T) {
 	)
 }
 
+func TestPromptWithCmdsPromptYes(t *testing.T) {
+	t.Parallel()
+
+	NewExecutorTest(t,
+		WithExecutorOptions(
+			task.WithDir("testdata/prompt"),
+			task.WithAssumeTerm(true),
+		),
+		WithTask("prompt-in-cmds"),
+		WithInput("y\n"),
+	)
+}
+
+func TestPromptWithCmdsPromptNo(t *testing.T) {
+	t.Parallel()
+
+	NewExecutorTest(t,
+		WithExecutorOptions(
+			task.WithDir("testdata/prompt"),
+			task.WithAssumeTerm(true),
+		),
+		WithTask("prompt-in-cmds"),
+		WithInput("n\n"),
+		WithRunError(),
+	)
+}
+
+func TestPromptWithCmdPromptYes(t *testing.T) {
+	t.Parallel()
+
+	NewExecutorTest(t,
+		WithExecutorOptions(
+			task.WithDir("testdata/prompt"),
+			task.WithAssumeTerm(true),
+		),
+		WithTask("prompt-in-cmd"),
+		WithInput("y\n"),
+	)
+}
+
+func TestPromptWithCmdPromptNo(t *testing.T) {
+	t.Parallel()
+
+	NewExecutorTest(t,
+		WithExecutorOptions(
+			task.WithDir("testdata/prompt"),
+			task.WithAssumeTerm(true),
+		),
+		WithTask("prompt-in-cmd"),
+		WithInput("n\n"),
+	)
+}
+
 func TestPromptAssumeYes(t *testing.T) {
 	t.Parallel()
 

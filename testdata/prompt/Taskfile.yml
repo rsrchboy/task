@@ -21,3 +21,16 @@ tasks:
       - Are you sure?
     cmds:
       - echo 'multi-prompt'
+
+  prompt-in-cmds:
+    cmds:
+      - echo 'foo'
+      - prompt: Do you want to continue?
+      - echo 'bar'
+
+  prompt-in-cmd:
+    cmds:
+      - echo 'foo'
+      - prompt: Do you want to continue?
+        cmd: echo 'dangerous'
+      - echo 'bar'
