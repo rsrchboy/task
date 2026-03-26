@@ -2300,6 +2300,47 @@ use `--yes` (`-y`) to force all tasks with a prompt to run.
 
 :::
 
+### Command-level prompts
+
+Prompts can also be set at the command level, which allows you to, e.g., do
+some preparatory work and then ask for confirmation before running a dangerous
+command.  In the following, the user will be prompted after the innocuous
+prep-work and before the dangerous command; if the user denies the prompt, the
+dangerous command will not be run but the innocuous prep-work will still be
+done:
+
+```yaml
+version: '3'
+
+tasks:
+  increasingly-dangerous:
+    cmds:
+      - echo 'Innocuous prep-work'
+      - prompt: "This cannot be undone... Do you want to continue?"
+      - echo 'Dangerous command'
+
+```
+
+Users may also prompt against a specific command.  In this case, the user will
+be prompted before the command is run; if the user denies the prompt, the
+specific command will not be run but the rest of the task will still be
+executed:
+
+```yaml
+version: '3'
+
+tasks:
+  increasingly-dangerous:
+    cmds:
+      - echo 'Innocuous prep-work'
+      - cmd: echo 'Dangerous command'
+        prompt: "This cannot be undone... Do you want to continue?"
+      - echo 'More innocuous work'
+```
+
+All the warnings and caveats mentioned above for task-level prompts also apply
+to command-level prompts.
+
 ## Silent mode
 
 Silent mode disables the echoing of commands before Task runs it. For the
